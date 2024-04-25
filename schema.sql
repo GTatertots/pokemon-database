@@ -19,7 +19,7 @@ CREATE TABLE moves (
 	pow INTEGER NOT NULL,
 	hit_chance INTEGER,
 	secondary TEXT,
-	secChance INTEGER
+	priority INTEGER
 );
 
 CREATE TABLE canlearn (
