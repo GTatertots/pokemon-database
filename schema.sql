@@ -4,12 +4,12 @@ CREATE TABLE pokemon (
 	type1 TEXT NOT NULL,
 	type2 TEXT,
 	bst INTEGER NOT NULL,
-	hp INTEGER NOT NULL,
-	atk INTEGER NOT NULL,
-	spatk INTEGER NOT NULL,
-	def INTEGER NOT NULL,
-	spdef INTEGER NOT NULL,
-	spd INTEGER NOT NULL
+	hit_points INTEGER NOT NULL,
+	attack INTEGER NOT NULL,
+	special_attack INTEGER NOT NULL,
+	defense INTEGER NOT NULL,
+	special_defense INTEGER NOT NULL,
+	speed INTEGER NOT NULL
 );
 
 CREATE TABLE moves (
