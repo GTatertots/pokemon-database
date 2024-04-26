@@ -17,6 +17,7 @@ def getdb():
 def cli():
     pass
 
+
 @click.command()
 @click.argument('pokemon1')
 @click.argument('pokemon2')
@@ -42,6 +43,60 @@ def type_coverage(team_id):
 
 cli.add_command(create_team)
 cli.add_command(type_coverage)
+
+@click.command()
+def generate():
+    people = 240
+    fin = open("social-media-random-user-account-data.txt")
+    for line in fin:
+        words = line.split()
+        email = words[0]
+        username = words[1]
+        password = words[2]
+
+        with getdb() as con:
+            cursor = con.cursor()
+            cursor.execute('''INSERT INTO users (email) VALUES (?)''', (email,))
+            id = cursor.lastrowid
+            print(f'inserted with id = {id}')
+        # adduser(email)
+        
+        with getdb() as con:
+            cursor = con.cursor()
+            cursor.execute('''INSERT INTO accounts (user_id, username, password) 
+                VALUES ((SELECT user_id FROM users WHERE email = ?), ?, ?)''', (email, username, password))
+            id = cursor.lastrowid
+            print(f'inserted with id = {id}')
+        # addaccount(email, username, password)
+    for i in range(1,people):
+        num1 = random.randrange(1, people)
+        num2 = random.randrange(1, people)
+        with getdb() as con:
+            if num1 != num2:
+                cursor = con.cursor()
+                cursor.execute('''INSERT INTO followers(follower_id, following_id)
+                    VALUES ((SELECT account_id FROM accounts WHERE user_id = ?), (SELECT account_id FROM accounts WHERE user_id = ?))''', (num1, num2))
+            # addaccount(email, username, password)
+    for i in range(1,people):
+        num3 = random.randrange(1, people)
+        num4 = random.randrange(1, people)
+        with getdb() as con:
+            if num1 != num2:
+                cursor = con.cursor()
+                cursor.execute('''INSERT INTO subscribers(subscriber_id, subscribing_id)
+                    VALUES ((SELECT account_id FROM accounts WHERE user_id = ?), (SELECT account_id FROM accounts WHERE user_id = ?))''', (num3, num4))
+    for i in range(1, people):
+        num5 = random.randrange(1, people)
+        num6 = random.randrange(1, people)
+        with getdb() as con:
+            if num1 != num2:
+                cursor = con.cursor()
+                cursor.execute('''INSERT INTO blocks(blocked_id, blocker_id)
+                    VALUES ((SELECT account_id FROM accounts WHERE user_id = ?), (SELECT account_id FROM accounts WHERE user_id = ?))''', (num3, num4))
+                
+
+
+
 
 #EXAMPLE ON HOW TO DO CLI
 #@click.group()
