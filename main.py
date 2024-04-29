@@ -17,6 +17,20 @@ def getdb():
 def cli():
     pass
 
+@click.command()
+@click.argument('pokedex_id')
+@click.argument('move1')
+@click.argument('move2')
+@click.argument('move3')
+@click.argument('move4')
+def create_specific_pokemon(pokedex_id, move1, move2, move3, move4):
+    with getdb() as con:
+        c = con.cursor()
+        c.execute("INSERT INTO team (pokedex_id, move1, move2, move3, move4) VALUES (?,?,?,?,?)", (pokedex_id, move1, move2, move3, move4))
+        con.commit()
+    print(f"--> New Pokemon caught with id: {pokedex_id} with: {move1}, {move2}, {move3}, and {move4}")
+
+
 
 @click.command()
 @click.argument('pokemon1')
@@ -30,10 +44,12 @@ def create_team(pokemon1, pokemon2, pokemon3, pokemon4, pokemon5, pokemon6):
         c = con.cursor()
         c.execute("INSERT INTO team (poke1, poke2, poke3, poke4, poke5, poke6) VALUES (?,?,?,?,?,?)", (pokemon1, pokemon2, pokemon3, pokemon4, pokemon5, pokemon6))
         con.commit()
-    print(f"--> created team: [{pokemon1},{pokemon2},{pokemon3},{pokemon4},{pokemon5},{[pokemon6}]")
+    print(f"--> created team: [{pokemon1},{pokemon2},{pokemon3},{pokemon4},{pokemon5},{pokemon6}]")
 
+@click.command()
 @click.argument('team_id')
-def type_coverage(team_id):
+def team_coverage(team_id):
+    #this query would look through all the pokemon on a team and sum up how many different types their moves cover
     with getdb() as con:
         c = con.cursor()
         c.execute("",team_id) #TODO
@@ -41,8 +57,35 @@ def type_coverage(team_id):
         print(f"team {team_id} has a coverage of {coverage} types")
         con.commit()
 
+@click.command()
+def best_coverage():
+    #this query could look through every pokemon's possible moves and see which pokemon have the best coverage possibility (top 10?)
+    #tie could be settled with Base Stat Total
+    with getdb() as con:
+        c = con.cursor()
+        c.execute("") #TODO
+        data = c.fetchall()
+        print(data)
+        con.commit()
+
+@click.command()
+@click.argument('team_id')
+@click.argument('enemy_pokemon')
+def counterpick('team_id','enemy_pokemon'):
+    #this query could look through the team provided and see which pokemon has the best attack advantage over the provided enemy pokemon
+    with getdb() as con:
+        c = con.cursor()
+        c.execute("") #TODO
+        pokemon = c.fetchall()
+        print(f"The best counterpick option is {pokemon}")
+        con.commit()
+
+
+cli.add_command(create_specific_pokemon)
 cli.add_command(create_team)
 cli.add_command(type_coverage)
+cli.add_command(best_coverage)
+cli.add_command(counterpick)
 
 
 #EXAMPLE ON HOW TO DO CLI
