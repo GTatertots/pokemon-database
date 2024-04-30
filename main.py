@@ -77,7 +77,7 @@ def powerful_moves(your_pokemon,enemy_pokemon):
         c.execute("""
 WITH move_damage AS (
     SELECT 
-        c.pokemon_id AS attacker_id,
+        c.pokedex_id AS attacker_id,
         m.name AS move_name,
         m.pow AS move_power,
         m.moveType AS move_type,
@@ -90,11 +90,11 @@ WITH move_damage AS (
         p2.special_defense AS defender_special_defense
     FROM canlearn AS c
     JOIN moves AS m ON c.move = m.name
-    JOIN pokemon AS p1 ON c.pokemon_id = p1.pokedex_id
-    JOIN pokemon AS p2 ON defending_pokedex_id = p2.pokedex_id
+    JOIN pokemon AS p1 ON c.pokedex_id = p1.pokedex_id
+    JOIN pokemon AS p2 ON p2.pokedex_id = ?
     LEFT JOIN typeeffective AS t1 ON m.moveType = t1.attackingtype AND p2.type1 = t1.defendingtype
     LEFT JOIN typeeffective AS t2 ON m.moveType = t2.attackingtype AND IFNULL(p2.type2, '???') = t2.defendingtype
-    WHERE c.pokemon_id IN (?, ?) 
+    WHERE c.pokedex_id IN (?, ?) 
 )
 SELECT 
     attacker_id,
@@ -113,7 +113,7 @@ WHERE total_damage = (
     SELECT MAX(move_power * type1_multiplier * type2_multiplier * type_bonus * attack_factor)
     FROM move_damage
 )
-""", (your_pokemon, enemy_pokemon))
+""", (enemy_pokemon, your_pokemon, enemy_pokemon))
         moves = c.fetchall()
         print(moves)
         con.commit()
@@ -169,11 +169,21 @@ def topBST():
             print(row)
         con.commit()
 
-#SELECT p.name, m.name AS move_name
-#FROM pokemon p
-#JOIN canlearn c ON p.pokedex_id = c.pokedex_id
-#JOIN moves m ON c.move = m.name
-#WHERE m.name = 'Thunderbolt';
+@click.command()
+@click.argument('move')
+def shared_move(move):
+    with getdb() as con:
+        c = con.cursor()
+        c.execute('''
+        SELECT p.name, m.name AS move_name
+        FROM pokemon p
+        JOIN canlearn c ON p.pokedex_id = c.pokedex_id
+        JOIN moves m ON c.move = m.name
+        WHERE m.name = ?''', (move,))
+        rows = c.fetchall()
+        for row in rows:
+            print(row)
+        con.commit()
 
 cli.add_command(create_specific_pokemon)
 cli.add_command(create_team)
@@ -182,6 +192,7 @@ cli.add_command(best_coverage)
 cli.add_command(powerful_moves)
 cli.add_command(counterpick)
 cli.add_command(topBST)
+cli.add_command(shared_move)
 cli()
 
 #EXAMPLE ON HOW TO DO CLI
