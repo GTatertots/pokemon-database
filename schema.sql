@@ -23,7 +23,7 @@ CREATE TABLE moves (
 );
 
 CREATE TABLE canlearn (
-	pokemon_id INTEGER,
+	pokemon_name INTEGER,
 	move TEXT,
 	PRIMARY KEY (pokemon_id, move),
 	FOREIGN KEY (pokemon_id) REFERENCES pokemon(pokedex_id),
