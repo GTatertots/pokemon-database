@@ -69,6 +69,56 @@ def best_coverage():
         con.commit()
 
 @click.command()
+@click.argument('your_pokemon')
+@click.argument('enemy_pokemon')
+def powerful_moves(your_pokemon,enemy_pokemon):
+    with getdb() as con:
+        c = con.cursor()
+        c.execute("""
+WITH move_damage AS (
+    SELECT 
+        c.pokemon_id AS attacker_id,
+        m.name AS move_name,
+        m.pow AS move_power,
+        m.moveType AS move_type,
+        m.physical AS is_physical,
+        t1.damagemultiplier AS type1_multiplier,
+        t2.damagemultiplier AS type2_multiplier,
+        p1.attack AS attacker_attack,
+        p2.defense AS defender_defense,
+        p1.special_attack AS attacker_special_attack,
+        p2.special_defense AS defender_special_defense
+    FROM canlearn AS c
+    JOIN moves AS m ON c.move = m.name
+    JOIN pokemon AS p1 ON c.pokemon_id = p1.pokedex_id
+    JOIN pokemon AS p2 ON defending_pokedex_id = p2.pokedex_id
+    LEFT JOIN typeeffective AS t1 ON m.moveType = t1.attackingtype AND p2.type1 = t1.defendingtype
+    LEFT JOIN typeeffective AS t2 ON m.moveType = t2.attackingtype AND IFNULL(p2.type2, '???') = t2.defendingtype
+    WHERE c.pokemon_id IN (?, ?) 
+)
+SELECT 
+    attacker_id,
+    move_name,
+    move_power * type1_multiplier * type2_multiplier AS total_damage,
+    CASE 
+        WHEN move_type = p1.type1 OR move_type = IFNULL(p1.type2, '???') THEN 1.5 
+        ELSE 1 
+    END AS type_bonus,
+    CASE 
+        WHEN is_physical = 1 THEN attacker_attack / defender_defense 
+        ELSE attacker_special_attack / defender_special_defense 
+    END AS attack_factor
+FROM move_damage
+WHERE total_damage = (
+    SELECT MAX(move_power * type1_multiplier * type2_multiplier * type_bonus * attack_factor)
+    FROM move_damage
+)
+""", (your_pokemon, enemy_pokemon))
+        moves = c.fetchall()
+        print(moves)
+        con.commit()
+
+@click.command()
 @click.argument('team_id')
 @click.argument('enemy_pokemon')
 def counterpick(team_id,enemy_pokemon):
@@ -129,6 +179,7 @@ cli.add_command(create_specific_pokemon)
 cli.add_command(create_team)
 cli.add_command(team_coverage)
 cli.add_command(best_coverage)
+cli.add_command(powerful_moves)
 cli.add_command(counterpick)
 cli.add_command(topBST)
 cli()

@@ -4144,7 +4144,8 @@ INSERT INTO types(typename) VALUES
 ('dragon'),
 ('dark'),
 ('steel'),
-('fairy');
+('fairy'),
+('???');
 
 
 -- Normal type interactions
@@ -4155,7 +4156,7 @@ INSERT INTO typeeffective (attackingtype, defendingtype, damagemultiplier) VALUE
 ('normal', 'electric', 1),
 ('normal', 'grass', 1),
 ('normal', 'ice', 1),
-('normal', 'fighting', 2),
+('normal', 'fighting', 1),
 ('normal', 'poison', 1),
 ('normal', 'ground', 1),
 ('normal', 'flying', 1),
@@ -4238,7 +4239,7 @@ INSERT INTO typeeffective (attackingtype, defendingtype, damagemultiplier) VALUE
 ('grass', 'water', 2),
 ('grass', 'electric', 2),
 ('grass', 'grass', 0.5),
-('grass', 'ice', 2),
+('grass', 'ice', 1),
 ('grass', 'fighting', 1),
 ('grass', 'poison', 0.5),
 ('grass', 'ground', 2),
@@ -4525,9 +4526,41 @@ INSERT INTO typeeffective (attackingtype, defendingtype, damagemultiplier) VALUE
 ('fairy', 'steel', 0.5),
 ('fairy', 'fairy', 1);
 
-
-
-
-
-
-
+-- ??? type interactions
+INSERT INTO typeeffective (attackingtype, defendingtype, damagemultiplier) VALUES
+('???', 'normal', 1),
+('???', 'fire', 1),
+('???', 'water', 1),
+('???', 'electric', 1),
+('???', 'grass', 1),
+('???', 'ice', 1),
+('???', 'fighting', 1),
+('???', 'poison', 1),
+('???', 'ground', 1),
+('???', 'flying', 1),
+('???', 'psychic', 1),
+('???', 'bug', 1),
+('???', 'rock', 1),
+('???', 'ghost', 1),
+('???', 'dragon', 1),
+('???', 'dark', 1),
+('???', 'steel', 1),
+('???', 'fairy', 1);
+('normal', '???', 1),
+('fire', '???', 1),
+('water', '???', 1),
+('electric', '???', 1),
+('grass', '???', 1),
+('ice', '???', 1),
+('fighting', '???', 1),
+('poison', '???', 1),
+('ground', '???', 1),
+('flying', '???', 1),
+('psychic', '???', 1),
+('bug', '???', 1),
+('rock', '???', 1),
+('ghost', '???', 1),
+('dragon', '???', 1),
+('dark', '???', 1),
+('steel', '???', 1),
+('fairy', '???', 1);
