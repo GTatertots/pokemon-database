@@ -185,6 +185,21 @@ def shared_move(move):
             print(row)
         con.commit()
 
+@click.command()
+@click.argument('name')
+def pokemon_moves(name):
+    with getdb() as con:
+        c = con.cursor()
+        c.execute('''
+        SELECT p.name, m.move 
+        FROM canlearn AS m
+        JOIN pokemon p ON m.pokedex_id = p.pokedex_id
+        WHERE p.name = ?''', (name,))
+        rows = c.fetchall()
+        for row in rows:
+            print(row)
+        con.commit()
+
 cli.add_command(create_specific_pokemon)
 cli.add_command(create_team)
 cli.add_command(team_coverage)
@@ -193,7 +208,10 @@ cli.add_command(powerful_moves)
 cli.add_command(counterpick)
 cli.add_command(topBST)
 cli.add_command(shared_move)
+cli.add_command(pokemon_moves)
 cli()
+
+
 
 #EXAMPLE ON HOW TO DO CLI
 #@click.group()
