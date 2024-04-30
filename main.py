@@ -119,6 +119,12 @@ def topBST():
             print(row)
         con.commit()
 
+SELECT p.name, m.name AS move_name
+FROM pokemon p
+JOIN canlearn c ON p.pokedex_id = c.pokedex_id
+JOIN moves m ON c.move = m.name
+WHERE m.name = 'Thunderbolt';
+
 cli.add_command(create_specific_pokemon)
 cli.add_command(create_team)
 cli.add_command(team_coverage)
