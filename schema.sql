@@ -4545,7 +4545,7 @@ INSERT INTO typeeffective (attackingtype, defendingtype, damagemultiplier) VALUE
 ('???', 'dragon', 1),
 ('???', 'dark', 1),
 ('???', 'steel', 1),
-('???', 'fairy', 1);
+('???', 'fairy', 1),
 ('normal', '???', 1),
 ('fire', '???', 1),
 ('water', '???', 1),
