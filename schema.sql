@@ -16,7 +16,7 @@ CREATE TABLE moves (
 	name TEXT PRIMARY KEY,
 	physical BOOLEAN NOT NULL,
 	moveType TEXT NOT NULL,
-	pow INTEGER NOT NULL,
+	pow INTEGER,
 	hit_chance INTEGER,
 	description TEXT,
 	power_points INTEGER
@@ -25,7 +25,7 @@ CREATE TABLE moves (
 CREATE TABLE canlearn (
 	pokemon_id INTEGER,
 	move TEXT,
-	PRIMARY KEY (pokemon_id, move_name),
+	PRIMARY KEY (pokemon_id, move),
 	FOREIGN KEY (pokemon_id) REFERENCES pokemon(pokedex_id),
 	FOREIGN KEY (move) REFERENCES moves(name)
 );

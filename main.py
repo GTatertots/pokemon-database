@@ -26,7 +26,7 @@ def cli():
 def create_specific_pokemon(pokedex_id, move1, move2, move3, move4):
     with getdb() as con:
         c = con.cursor()
-        c.execute("INSERT INTO team (pokedex_id, move1, move2, move3, move4) VALUES (?,?,?,?,?)", (pokedex_id, move1, move2, move3, move4))
+        c.execute("INSERT INTO specificpokemon (pokedex_id, move1, move2, move3, move4) VALUES (?,?,?,?,?)", (pokedex_id, move1, move2, move3, move4))
         con.commit()
     print(f"--> New Pokemon caught with id: {pokedex_id} with: {move1}, {move2}, {move3}, and {move4}")
 
@@ -71,22 +71,60 @@ def best_coverage():
 @click.command()
 @click.argument('team_id')
 @click.argument('enemy_pokemon')
-def counterpick('team_id','enemy_pokemon'):
+def counterpick(team_id,enemy_pokemon):
     #this query could look through the team provided and see which pokemon has the best attack advantage over the provided enemy pokemon
     with getdb() as con:
         c = con.cursor()
-        c.execute("") #TODO
+        c.execute("""
+            SELECT pokemon_a.pokemon_id, SUM(damagemultiplier) AS score
+            FROM team
+            JOIN specificpokemon AS pokemon_a
+                ON (pokemon_a.pokemon_id = poke1
+                OR pokemon_a.pokemon_id = poke2
+                OR pokemon_a.pokemon_id = poke3
+                OR pokemon_a.pokemon_id = poke4
+                OR pokemon_a.pokemon_id = poke5
+                OR pokemon_a.pokemon_id = poke6)
+            JOIN moves
+                ON (moves.name = pokemon_a.move1
+                OR moves.name = pokemon_a.move2
+                OR moves.name = pokemon_a.move3
+                OR moves.name = pokemon_a.move4)
+            JOIN typeeffective
+                ON attackingtype = moveType
+            JOIN pokemon
+                ON (defendingtype = type1
+                OR defendingtype = type2)
+            JOIN specificpokemon AS pokemon_b
+                ON pokemon.pokedex_id = pokemon_b.pokedex_id
+            
+            WHERE teamid = ?
+            AND pokemon_b.pokemon_id = ?
+            
+            GROUP BY pokemon_a.pokemon_id
+            ORDER BY score
+                """, (team_id, enemy_pokemon))
         pokemon = c.fetchall()
-        print(f"The best counterpick option is {pokemon}")
+        print(pokemon)
         con.commit()
 
 
+@click.command()
+def topBST():
+    with getdb() as con:
+        c = con.cursor()
+        c.execute("SELECT Name, BST FROM pokemon ORDER BY bst DESC LIMIT 10") #TODO
+        data = c.fetchall()
+        print(data)
+        con.commit()
+
 cli.add_command(create_specific_pokemon)
 cli.add_command(create_team)
-cli.add_command(type_coverage)
+cli.add_command(team_coverage)
 cli.add_command(best_coverage)
 cli.add_command(counterpick)
-
+cli.add_command(topBST)
+cli()
 
 #EXAMPLE ON HOW TO DO CLI
 #@click.group()
