@@ -114,8 +114,9 @@ def topBST():
     with getdb() as con:
         c = con.cursor()
         c.execute("SELECT Name, BST FROM pokemon ORDER BY bst DESC LIMIT 10") #TODO
-        data = c.fetchall()
-        print(data)
+        rows = c.fetchall()
+        for row in rows:
+            print(row)
         con.commit()
 
 cli.add_command(create_specific_pokemon)
